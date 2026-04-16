@@ -1,6 +1,10 @@
 package logger
 
-import "go.uber.org/zap/zapcore"
+import (
+	"fmt"
+
+	"go.uber.org/zap/zapcore"
+)
 
 // Config содержит параметры конфигурации для создания логгера.
 // Level — уровень логирования (debug, info, warn, error, panic).
@@ -18,7 +22,7 @@ func (c Config) Validate() []error {
 	var errs []error
 	_, err := zapcore.ParseLevel(c.Level)
 	if err != nil {
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("некорректный уровень логирования %q", c.Level))
 	}
 	return errs
 }

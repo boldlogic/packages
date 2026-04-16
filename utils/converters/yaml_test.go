@@ -40,3 +40,25 @@ func TestDecodeYAML(t *testing.T) {
 		}
 	})
 }
+
+func TestDecodeYAMLStrict(t *testing.T) {
+	t.Run("валидный YAML декодируется", func(t *testing.T) {
+		got, err := DecodeYAMLStrict[sampleYAML]([]byte("name: one\n"))
+		if err != nil {
+			t.Fatalf("DecodeYAMLStrict: %v", err)
+		}
+		if got.Name != "one" {
+			t.Fatalf("Name=%q, ожидали one", got.Name)
+		}
+	})
+
+	t.Run("неизвестное поле возвращает ErrWrongYAML", func(t *testing.T) {
+		_, err := DecodeYAMLStrict[sampleYAML]([]byte("name: one\nextra: value\n"))
+		if err == nil {
+			t.Fatal("ожидали ошибку")
+		}
+		if !errors.Is(err, ErrWrongYAML) {
+			t.Fatalf("ошибка %v, ожидали ErrWrongYAML", err)
+		}
+	})
+}

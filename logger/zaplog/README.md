@@ -58,7 +58,7 @@ func New(cfg Config) *zap.Logger
 ## Установка
 
 ```bash
-go get github.com/boldlogic/packages/logger/zaplog@v0.1.0
+go get github.com/boldlogic/packages/logger/zaplog@v0.1.2
 ```
 
 ## Пример конфигурации
@@ -90,13 +90,13 @@ func main() {
     }
 
     if errs := cfg.Validate(); len(errs) > 0 {
-        log.Fatalf("invalid logger config: %v", errs)
+        log.Fatalf("некорректная конфигурация логгера: %v", errs)
     }
 
     l := zaplog.New(cfg)
     defer l.Sync()
 
-    l.Info("service started")
+    l.Info("сервис запущен")
 }
 ```
 

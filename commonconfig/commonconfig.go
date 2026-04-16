@@ -61,3 +61,31 @@ func DecodeConfig[T any](path string) (T, error) {
 	}
 	return v, nil
 }
+
+// DecodeConfigStrict декодирует файл конфигурации как DecodeConfig,
+// но дополнительно запрещает неизвестные поля в YAML/JSON.
+func DecodeConfigStrict[T any](path string) (T, error) {
+	var v T
+
+	fileBody, err := readFile(path)
+	if err != nil {
+		return v, err
+	}
+
+	ext := strings.ToLower(filepath.Ext(path))
+	switch {
+	case ext == ".yaml" || ext == ".yml":
+		v, err = converters.DecodeYAMLStrict[T](fileBody)
+
+	case ext == ".json":
+		v, err = converters.DecodeJSONStrict[T](fileBody)
+
+	default:
+		return v, fmt.Errorf("%w %s", ErrWrongFileExt, path)
+	}
+
+	if err != nil {
+		return v, err
+	}
+	return v, nil
+}

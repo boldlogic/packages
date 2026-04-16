@@ -28,6 +28,18 @@ func Test_writeSyncers(t *testing.T) {
 			t.Fatalf("ожидали 1 syncer, получили %d", len(ss))
 		}
 	})
+
+	t.Run("один и тот же output_file переиспользует syncer", func(t *testing.T) {
+		first := writeSyncers(Config{OutputFile: os.DevNull})
+		second := writeSyncers(Config{OutputFile: os.DevNull})
+
+		if len(first) != 1 || len(second) != 1 {
+			t.Fatalf("ожидали по одному syncer, получили %d и %d", len(first), len(second))
+		}
+		if first[0] != second[0] {
+			t.Fatal("ожидали переиспользование syncer для одного файла")
+		}
+	})
 }
 
 func TestNew_noPanic(t *testing.T) {

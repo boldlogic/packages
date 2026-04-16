@@ -40,3 +40,25 @@ func TestDecodeJSON(t *testing.T) {
 		}
 	})
 }
+
+func TestDecodeJSONStrict(t *testing.T) {
+	t.Run("валидный JSON декодируется", func(t *testing.T) {
+		got, err := DecodeJSONStrict[sampleJSON]([]byte(`{"name":"one"}`))
+		if err != nil {
+			t.Fatalf("DecodeJSONStrict: %v", err)
+		}
+		if got.Name != "one" {
+			t.Fatalf("Name=%q, ожидали one", got.Name)
+		}
+	})
+
+	t.Run("неизвестное поле возвращает ErrWrongJSON", func(t *testing.T) {
+		_, err := DecodeJSONStrict[sampleJSON]([]byte(`{"name":"one","extra":"value"}`))
+		if err == nil {
+			t.Fatal("ожидали ошибку")
+		}
+		if !errors.Is(err, ErrWrongJSON) {
+			t.Fatalf("ошибка %v, ожидали ErrWrongJSON", err)
+		}
+	})
+}
