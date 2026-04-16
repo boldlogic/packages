@@ -55,6 +55,29 @@ func New(cfg Config) *zap.Logger
 
 Файл открывается с флагами append, create и write.
 
+## Пример конфигурации
+
+### JSON
+
+```json
+{
+  "log": {
+    "level": "debug",
+    "format": "json",
+    "output_file": "app.log"
+  }
+}
+```
+
+### YAML
+
+```yaml
+log:
+  level: debug
+  format: json
+  output_file: app.log
+```
+
 ## Пример использования
 
 ```go
