@@ -55,33 +55,20 @@ func New(cfg Config) *zap.Logger
 
 Файл открывается с флагами append, create и write.
 
-## Пример конфигурации
-
-### JSON
-
-```json
-{
-  "log": {
-    "level": "debug",
-    "format": "json",
-    "output_file": "app.log"
-  }
-}
-```
-
-### YAML
-
-```yaml
-log:
-  level: debug
-  format: json
-  output_file: app.log
-```
-
 ## Установка
 
 ```bash
 go get github.com/boldlogic/packages/logger/zaplog@v0.1.0
+```
+
+## Пример конфигурации
+
+```json
+{
+  "level": "debug",
+  "format": "json",
+  "output_file": "app.log"
+}
 ```
 
 ## Пример использования
@@ -97,9 +84,9 @@ import (
 
 func main() {
     cfg := zaplog.Config{
-        Level:      "info",
+        Level:      "debug",
         Format:     "json",
-        OutputFile: "",
+        OutputFile: "app.log",
     }
 
     if errs := cfg.Validate(); len(errs) > 0 {
