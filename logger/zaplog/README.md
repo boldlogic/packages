@@ -78,6 +78,12 @@ log:
   output_file: app.log
 ```
 
+## Установка
+
+```bash
+go get github.com/boldlogic/packages/logger/zaplog@v0.1.0
+```
+
 ## Пример использования
 
 ```go
@@ -86,11 +92,11 @@ package main
 import (
     "log"
 
-    logger "github.com/boldlogic/packages/logger/zaplog"
+    zaplog "github.com/boldlogic/packages/logger/zaplog"
 )
 
 func main() {
-    cfg := logger.Config{
+    cfg := zaplog.Config{
         Level:      "info",
         Format:     "json",
         OutputFile: "",
@@ -100,7 +106,7 @@ func main() {
         log.Fatalf("invalid logger config: %v", errs)
     }
 
-    l := logger.New(cfg)
+    l := zaplog.New(cfg)
     defer l.Sync()
 
     l.Info("service started")
