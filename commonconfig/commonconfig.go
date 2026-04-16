@@ -16,6 +16,8 @@ var (
 	ErrWrongFileExt = errors.New("некорректное расширение файла конфигурации")
 )
 
+// readFile читает содержимое файла по указанному пути.
+// Возвращает ошибку, если файл не существует или недоступен для чтения.
 func readFile(path string) ([]byte, error) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -31,6 +33,9 @@ func readFile(path string) ([]byte, error) {
 
 }
 
+// DecodeConfig декодирует файл конфигурации в структуру типа T (дженерик).
+// Поддерживает форматы: .yaml, .yml, .json.
+// Выбор формата определяется по расширению файла.
 func DecodeConfig[T any](path string) (T, error) {
 	var v T
 

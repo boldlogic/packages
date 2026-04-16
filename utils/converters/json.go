@@ -10,6 +10,8 @@ var (
 	ErrWrongJSON = errors.New("некорректный формат JSON")
 )
 
+// DecodeJSON декодирует JSON-данные в структуру типа T.
+// Возвращает ошибку, если данные имеют некорректный формат.
 func DecodeJSON[T any](filebody []byte) (T, error) {
 	var v T
 	err := json.Unmarshal(filebody, &v)

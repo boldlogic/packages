@@ -11,6 +11,8 @@ var (
 	ErrWrongYAML = errors.New("некорректный формат YAML")
 )
 
+// DecodeYAML декодирует YAML-данные в структуру типа T.
+// Возвращает ошибку, если данные имеют некорректный формат.
 func DecodeYAML[T any](filebody []byte) (T, error) {
 	var v T
 	err := yaml.Unmarshal(filebody, &v)
