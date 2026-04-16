@@ -8,6 +8,9 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// writeSyncers возвращает список синхронизаторов записи для вывода логов.
+// Если OutputFile пустой, возвращает синхронизатор для stdout.
+// Если файл недоступен для открытия, также возвращается stdout.
 func writeSyncers(cfg Config) []zapcore.WriteSyncer {
 	if cfg.OutputFile == "" {
 		return []zapcore.WriteSyncer{zapcore.Lock(os.Stdout)}
@@ -19,6 +22,9 @@ func writeSyncers(cfg Config) []zapcore.WriteSyncer {
 	return []zapcore.WriteSyncer{zapcore.Lock(zapcore.AddSync(f))}
 }
 
+// New создаёт новый экземпляр zap.Logger на основе переданной конфигурации.
+// Логгер создаётся с включённым caller skip для автоматического добавления
+// информации о месте вызова в каждое сообщение лога.
 func New(cfg Config) *zap.Logger {
 	lvl, _ := zapcore.ParseLevel(cfg.Level)
 

@@ -14,7 +14,7 @@ func Test_writeSyncers(t *testing.T) {
 		}
 	})
 
-	t.Run("output_file открывается: один WriteSyncer только в файл (без дубля в stdout)", func(t *testing.T) {
+	t.Run("output_file открывается: один WriteSyncer только в файл", func(t *testing.T) {
 		ss := writeSyncers(Config{OutputFile: os.DevNull})
 		if len(ss) != 1 {
 			t.Fatalf("ожидали 1 syncer, получили %d", len(ss))
