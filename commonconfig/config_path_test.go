@@ -32,7 +32,7 @@ func TestGetConfigPath(t *testing.T) {
 		}
 	})
 
-	t.Run("повторный вызов не паникует и возвращает то же значение", func(t *testing.T) {
+	t.Run("повторный_вызов", func(t *testing.T) {
 		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 		customPath := filepath.Join("custom", "config.yaml")
 		os.Args = []string{"test", "-config", customPath}

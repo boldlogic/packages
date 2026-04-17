@@ -3,13 +3,14 @@
 [![CI](https://github.com/boldlogic/packages/actions/workflows/go.yml/badge.svg)](https://github.com/boldlogic/packages/actions/workflows/go.yml)
 [![Go Version](https://img.shields.io/badge/go-1.26.2-blue.svg)](https://golang.org)
 
-Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML и инициализация логгера на базе `zap`.
+Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, инициализация логгера на базе `zap` и подключение к Microsoft SQL Server.
 
 ## Что есть в репозитории
 
 | Пакет | Назначение |
 | --- | --- |
 | [commonconfig](./commonconfig) | Получение пути к конфигу и декодирование файла в типизированную структуру |
+| [dbzap](./dbzap) | Конфиг подключения к SQL Server и открытие соединения через `database/sql` |
 | [logger/zaplog](./logger/zaplog) | Минимальная обёртка над `zap` с простым конфигом |
 | [utils/converters](./utils/converters) | Дженерик-декодеры JSON и YAML из `[]byte` |
 
@@ -17,6 +18,7 @@
 
 - Нужен единый способ читать конфигурацию из `.yaml`, `.yml` или `.json`.
 - Хочется быстро поднять структурированный логгер без отдельного слоя инициализации.
+- Нужно стандартно описывать подключение к SQL Server и открывать его с `PingContext`.
 - Нужны компактные переиспользуемые пакеты без тяжёлой инфраструктуры.
 
 ## Требования
@@ -33,6 +35,7 @@ go get github.com/boldlogic/packages@latest
 
 ```bash
 go get github.com/boldlogic/packages/commonconfig
+go get github.com/boldlogic/packages/dbzap
 go get github.com/boldlogic/packages/logger/zaplog
 go get github.com/boldlogic/packages/utils/converters
 ```
@@ -82,12 +85,14 @@ go run ./cmd/app -config ./configs/dev.yaml
 
 - `commonconfig.DecodeConfig` сохраняет текущее мягкое поведение и игнорирует неизвестные поля.
 - Если нужна строгая проверка структуры конфига, используйте `commonconfig.DecodeConfigStrict`.
+- `dbzap` сейчас ориентирован на `sqlserver` и проверяет соединение с БД через `PingContext` при создании.
 - `zaplog` пишет либо в `stdout`, либо в один файл, указанный в `OutputFile`.
 - Если файл логов открыть не удалось, `zaplog` автоматически переключается на `stdout`.
 
 ## Зависимости
 
 - `go.uber.org/zap` для логирования
+- `github.com/microsoft/go-mssqldb` для SQL Server
 - `gopkg.in/yaml.v3` для YAML
 
 ## Разработка
@@ -95,8 +100,10 @@ go run ./cmd/app -config ./configs/dev.yaml
 Основные проверки в репозитории:
 
 ```bash
+golangci-lint run
+go run ./cmd/projectlint
 go test ./...
 go vet ./...
 ```
 
-CI в GitHub Actions выполняет сборку, тесты и базовые проверки качества.
+CI в GitHub Actions выполняет проверку уязвимостей, линтинг, project-specific проверки, сборку и тесты.

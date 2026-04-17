@@ -10,7 +10,7 @@ type sampleYAML struct {
 }
 
 func TestDecodeYAML(t *testing.T) {
-	t.Run("Валидный YAML с полем name, без ошибки, Name заполнено", func(t *testing.T) {
+	t.Run("валидный_yaml", func(t *testing.T) {
 		got, err := DecodeYAML[sampleYAML]([]byte("name: one\n"))
 		if err != nil {
 			t.Fatalf("DecodeYAML: %v", err)
@@ -20,7 +20,7 @@ func TestDecodeYAML(t *testing.T) {
 		}
 	})
 
-	t.Run("Некорректный YAML (обрыв списка): ErrWrongYAML", func(t *testing.T) {
+	t.Run("обрыв_yaml_ErrWrongYAML", func(t *testing.T) {
 		_, err := DecodeYAML[sampleYAML]([]byte("name: [\n"))
 		if err == nil {
 			t.Fatal("ожидали ошибку")
@@ -30,7 +30,7 @@ func TestDecodeYAML(t *testing.T) {
 		}
 	})
 
-	t.Run("Пустой документ YAML: без ошибки, структура нулевая", func(t *testing.T) {
+	t.Run("пустой_yaml", func(t *testing.T) {
 		got, err := DecodeYAML[sampleYAML]([]byte(""))
 		if err != nil {
 			t.Fatalf("DecodeYAML: %v", err)
@@ -42,7 +42,7 @@ func TestDecodeYAML(t *testing.T) {
 }
 
 func TestDecodeYAMLStrict(t *testing.T) {
-	t.Run("валидный YAML декодируется", func(t *testing.T) {
+	t.Run("strict_валидный_yaml", func(t *testing.T) {
 		got, err := DecodeYAMLStrict[sampleYAML]([]byte("name: one\n"))
 		if err != nil {
 			t.Fatalf("DecodeYAMLStrict: %v", err)
@@ -52,7 +52,7 @@ func TestDecodeYAMLStrict(t *testing.T) {
 		}
 	})
 
-	t.Run("неизвестное поле возвращает ErrWrongYAML", func(t *testing.T) {
+	t.Run("strict_неизвестное_поле_ErrWrongYAML", func(t *testing.T) {
 		_, err := DecodeYAMLStrict[sampleYAML]([]byte("name: one\nextra: value\n"))
 		if err == nil {
 			t.Fatal("ожидали ошибку")

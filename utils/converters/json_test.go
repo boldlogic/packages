@@ -10,7 +10,7 @@ type sampleJSON struct {
 }
 
 func TestDecodeJSON(t *testing.T) {
-	t.Run("Валидный JSON-объект: без ошибки, поле Name заполнено", func(t *testing.T) {
+	t.Run("валидный_json", func(t *testing.T) {
 		got, err := DecodeJSON[sampleJSON]([]byte(`{"name":"one"}`))
 		if err != nil {
 			t.Fatalf("DecodeJSON: %v", err)
@@ -20,7 +20,7 @@ func TestDecodeJSON(t *testing.T) {
 		}
 	})
 
-	t.Run("Обрыв JSON: ErrWrongJSON", func(t *testing.T) {
+	t.Run("обрыв_json_ErrWrongJSON", func(t *testing.T) {
 		_, err := DecodeJSON[sampleJSON]([]byte(`{"name":`))
 		if err == nil {
 			t.Fatal("ожидали ошибку")
@@ -30,7 +30,7 @@ func TestDecodeJSON(t *testing.T) {
 		}
 	})
 
-	t.Run("Пустая строка как тело: ErrWrongJSON", func(t *testing.T) {
+	t.Run("пустое_тело_ErrWrongJSON", func(t *testing.T) {
 		_, err := DecodeJSON[sampleJSON]([]byte(""))
 		if err == nil {
 			t.Fatal("ожидали ошибку")
@@ -42,7 +42,7 @@ func TestDecodeJSON(t *testing.T) {
 }
 
 func TestDecodeJSONStrict(t *testing.T) {
-	t.Run("валидный JSON декодируется", func(t *testing.T) {
+	t.Run("strict_валидный_json", func(t *testing.T) {
 		got, err := DecodeJSONStrict[sampleJSON]([]byte(`{"name":"one"}`))
 		if err != nil {
 			t.Fatalf("DecodeJSONStrict: %v", err)
@@ -52,7 +52,7 @@ func TestDecodeJSONStrict(t *testing.T) {
 		}
 	})
 
-	t.Run("неизвестное поле возвращает ErrWrongJSON", func(t *testing.T) {
+	t.Run("strict_неизвестное_поле_ErrWrongJSON", func(t *testing.T) {
 		_, err := DecodeJSONStrict[sampleJSON]([]byte(`{"name":"one","extra":"value"}`))
 		if err == nil {
 			t.Fatal("ожидали ошибку")

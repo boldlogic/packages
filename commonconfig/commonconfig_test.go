@@ -100,7 +100,7 @@ func TestDecodeConfig(t *testing.T) {
 }
 
 func TestDecodeConfigStrict(t *testing.T) {
-	t.Run("yaml с неизвестным полем возвращает ошибку", func(t *testing.T) {
+	t.Run("yaml_неизвестное_поле", func(t *testing.T) {
 		p := writeTemp(t, "c.yaml", []byte("name: alpha\nextra: value\n"))
 		_, err := DecodeConfigStrict[sampleCfg](p)
 		if err == nil {
@@ -108,7 +108,7 @@ func TestDecodeConfigStrict(t *testing.T) {
 		}
 	})
 
-	t.Run("json с неизвестным полем возвращает ошибку", func(t *testing.T) {
+	t.Run("json_неизвестное_поле", func(t *testing.T) {
 		p := writeTemp(t, "c.json", []byte(`{"name":"alpha","extra":"value"}`))
 		_, err := DecodeConfigStrict[sampleCfg](p)
 		if err == nil {
