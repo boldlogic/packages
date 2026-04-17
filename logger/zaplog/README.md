@@ -58,7 +58,7 @@ func New(cfg Config) *zap.Logger
 ## Установка
 
 ```bash
-go get github.com/boldlogic/packages/logger/zaplog@v0.1.5
+go get github.com/boldlogic/packages/logger/zaplog@v0.1.6
 ```
 
 ## Пример конфигурации
