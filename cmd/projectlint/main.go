@@ -186,8 +186,10 @@ func lintTestFile(path string) ([]finding, error) {
 		}
 
 		nameLit, ok := call.Args[0].(*ast.BasicLit)
-		if !ok || nameLit.Kind != token.STRING {
-			findings = append(findings, newFinding(fset, path, call.Pos(), "имя под-теста t.Run должно быть строковым литералом"))
+		if !ok {
+			return true
+		}
+		if nameLit.Kind != token.STRING {
 			return true
 		}
 

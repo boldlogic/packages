@@ -3,22 +3,32 @@
 [![CI](https://github.com/boldlogic/packages/actions/workflows/go.yml/badge.svg)](https://github.com/boldlogic/packages/actions/workflows/go.yml)
 [![Go Version](https://img.shields.io/badge/go-1.26.2-blue.svg)](https://golang.org)
 
-Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, инициализация логгера на базе `zap` и подключение к Microsoft SQL Server.
+Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, in-memory cache, базовый Prometheus registry, периодические фоновые задачи, инициализация логгера на базе `zap`, подключение к Microsoft SQL Server и обработка ошибок graceful shutdown.
 
 ## Что есть в репозитории
 
 | Пакет | Назначение |
 | --- | --- |
+| [cache](./cache) | Простой in-memory cache с TTL для записей |
 | [commonconfig](./commonconfig) | Получение пути к конфигу и декодирование файла в типизированную структуру |
 | [dbzap](./dbzap) | Конфиг подключения к SQL Server и открытие соединения через `database/sql` |
 | [logger/zaplog](./logger/zaplog) | Минимальная обёртка над `zap` с простым конфигом |
+| [metrics](./metrics) | Базовый Prometheus registry со стандартными коллекторами |
+| [periodic](./periodic) | Запуск периодических worker и координация фоновых задач |
+| [shutdown](./shutdown) | Распознавание ошибок отмены контекста и превышения дедлайна |
 | [utils/converters](./utils/converters) | Дженерик-декодеры JSON и YAML из `[]byte` |
+| [utils/xmlconv](./utils/xmlconv) | Утилиты для декодирования XML, включая числа с десятичной запятой |
 
 ## Когда это полезно
 
 - Нужен единый способ читать конфигурацию из `.yaml`, `.yml` или `.json`.
+- Нужен небольшой локальный cache в памяти с TTL.
+- Нужен готовый Prometheus registry без дублирования инициализации стандартных коллекторов.
+- Нужно запускать фоновые задачи по интервалу и останавливать их по контексту.
 - Хочется быстро поднять структурированный логгер без отдельного слоя инициализации.
 - Нужно стандартно описывать подключение к SQL Server и открывать его с `PingContext`.
+- Нужно отличать ожидаемую отмену по контексту от настоящих ошибок приложения.
+- Нужно разбирать XML с числами в формате `12,34`.
 - Нужны компактные переиспользуемые пакеты без тяжёлой инфраструктуры.
 
 ## Требования
@@ -35,9 +45,14 @@ go get github.com/boldlogic/packages@latest
 
 ```bash
 go get github.com/boldlogic/packages/commonconfig
+go get github.com/boldlogic/packages/cache
 go get github.com/boldlogic/packages/dbzap
 go get github.com/boldlogic/packages/logger/zaplog
+go get github.com/boldlogic/packages/metrics
+go get github.com/boldlogic/packages/periodic
+go get github.com/boldlogic/packages/shutdown
 go get github.com/boldlogic/packages/utils/converters
+go get github.com/boldlogic/packages/utils/xmlconv
 ```
 
 ## Быстрый старт
@@ -84,10 +99,15 @@ go run ./cmd/app -config ./configs/dev.yaml
 ## Что важно знать
 
 - `commonconfig.DecodeConfig` сохраняет текущее мягкое поведение и игнорирует неизвестные поля.
+- `cache` не запускает фоновую очистку автоматически: для удаления истёкших записей используется `Cleanup`.
 - Если нужна строгая проверка структуры конфига, используйте `commonconfig.DecodeConfigStrict`.
 - `dbzap` сейчас ориентирован на `sqlserver` и проверяет соединение с БД через `PingContext` при создании.
+- `metrics.New` сразу регистрирует стандартные Go- и process-метрики Prometheus.
+- `periodic` запускает worker до отмены контекста и подходит для фоновых сервисных задач.
+- `shutdown.IsExceeded` возвращает `true` для `context.Canceled` и `context.DeadlineExceeded`, включая обёрнутые ошибки.
 - `zaplog` пишет либо в `stdout`, либо в один файл, указанный в `OutputFile`.
 - Если файл логов открыть не удалось, `zaplog` автоматически переключается на `stdout`.
+- `xmlconv.RuFloat` помогает читать XML-числа с десятичной запятой без ручного пост-обработчика.
 
 ## Зависимости
 
