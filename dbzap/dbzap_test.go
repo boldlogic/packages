@@ -34,7 +34,7 @@ func (c *testConn) Begin() (driver.Tx, error) {
 	return nil, errors.New("не реализовано")
 }
 
-func (c *testConn) Ping(ctx context.Context) error {
+func (c *testConn) Ping(_ context.Context) error {
 	return errors.New("ошибка ping")
 }
 

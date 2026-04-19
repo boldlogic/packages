@@ -54,7 +54,7 @@ func TestPeriodicWorker_Run(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		w := NewPeriodicWorker("job", "ошибка job", 10*time.Millisecond, func(ctx context.Context) error {
+		w := NewPeriodicWorker("job", "ошибка job", 10*time.Millisecond, func(_ context.Context) error {
 			if called.Add(1) == 1 {
 				cancel()
 			}
@@ -83,7 +83,7 @@ func TestPeriodicWorker_Run(t *testing.T) {
 		defer cancel()
 
 		var called atomic.Int32
-		w := NewPeriodicWorker("job", "ошибка job", 10*time.Millisecond, func(ctx context.Context) error {
+		w := NewPeriodicWorker("job", "ошибка job", 10*time.Millisecond, func(_ context.Context) error {
 			if called.Add(1) == 1 {
 				cancel()
 			}
