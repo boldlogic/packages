@@ -1,6 +1,6 @@
 module github.com/boldlogic/packages
 
-go 1.25.7
+go 1.25.9
 
 require go.uber.org/zap v1.27.1
 
