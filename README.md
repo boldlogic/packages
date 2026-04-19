@@ -1,7 +1,7 @@
 # packages
 
 [![CI](https://github.com/boldlogic/packages/actions/workflows/go.yml/badge.svg)](https://github.com/boldlogic/packages/actions/workflows/go.yml)
-[![Go Version](https://img.shields.io/badge/go-1.26.2-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/go-1.25.7-blue.svg)](https://golang.org)
 
 Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, in-memory cache, базовый Prometheus registry, периодические фоновые задачи, инициализация логгера на базе `zap`, подключение к Microsoft SQL Server и обработка ошибок graceful shutdown.
 
@@ -35,7 +35,7 @@
 
 ## Требования
 
-- Go `1.26.2+`
+- Go `1.25.7+`
 
 ## Установка
 
