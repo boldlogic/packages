@@ -25,12 +25,10 @@ func readFile(path string) ([]byte, error) {
 	}
 
 	bs, err := os.ReadFile(path)
-
 	if err != nil {
 		return nil, fmt.Errorf("%w %s: %w", ErrFileRead, path, err)
 	}
 	return bs, nil
-
 }
 
 // DecodeConfig декодирует файл конфигурации в структуру типа T (дженерик).
@@ -45,13 +43,11 @@ func DecodeConfig[T any](path string) (T, error) {
 	}
 
 	ext := strings.ToLower(filepath.Ext(path))
-	switch {
-	case ext == ".yaml" || ext == ".yml":
+	switch ext {
+	case ".yaml", ".yml":
 		v, err = converters.DecodeYAML[T](fileBody)
-
-	case ext == ".json":
+	case ".json":
 		v, err = converters.DecodeJSON[T](fileBody)
-
 	default:
 		return v, fmt.Errorf("%w %s", ErrWrongFileExt, path)
 	}
@@ -73,13 +69,11 @@ func DecodeConfigStrict[T any](path string) (T, error) {
 	}
 
 	ext := strings.ToLower(filepath.Ext(path))
-	switch {
-	case ext == ".yaml" || ext == ".yml":
+	switch ext {
+	case ".yaml", ".yml":
 		v, err = converters.DecodeYAMLStrict[T](fileBody)
-
-	case ext == ".json":
+	case ".json":
 		v, err = converters.DecodeJSONStrict[T](fileBody)
-
 	default:
 		return v, fmt.Errorf("%w %s", ErrWrongFileExt, path)
 	}

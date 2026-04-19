@@ -17,11 +17,11 @@ type testDriver struct{}
 
 type testConn struct{}
 
-func (d testDriver) Open(name string) (driver.Conn, error) {
+func (d testDriver) Open(_ string) (driver.Conn, error) {
 	return &testConn{}, nil
 }
 
-func (c *testConn) Prepare(query string) (driver.Stmt, error) {
+func (c *testConn) Prepare(_ string) (driver.Stmt, error) {
 	return nil, errors.New("не реализовано")
 }
 
@@ -50,7 +50,7 @@ func TestNew(t *testing.T) {
 		registerTestDriver()
 
 		prevOpen := sqlOpen
-		sqlOpen = func(driverName, dsn string) (*sql.DB, error) {
+		sqlOpen = func(_ string, dsn string) (*sql.DB, error) {
 			return sql.Open(testDriverName, dsn)
 		}
 		defer func() { sqlOpen = prevOpen }()
@@ -71,7 +71,7 @@ func TestOpenDB(t *testing.T) {
 		testDriverCloseCount = 0
 
 		prevOpen := sqlOpen
-		sqlOpen = func(driverName, dsn string) (*sql.DB, error) {
+		sqlOpen = func(_ string, dsn string) (*sql.DB, error) {
 			return sql.Open(testDriverName, dsn)
 		}
 		defer func() { sqlOpen = prevOpen }()

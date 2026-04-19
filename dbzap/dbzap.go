@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	// Регистрирует драйвер SQL Server для database/sql.
 	_ "github.com/microsoft/go-mssqldb"
 	"go.uber.org/zap"
 )
@@ -56,5 +57,5 @@ func openDB(ctx context.Context, dsn string) (*sql.DB, error) {
 
 // Close закрывает подключение к БД.
 func (p *Pool) Close() {
-	p.Db.Close()
+	_ = p.Db.Close()
 }

@@ -25,14 +25,14 @@ func (w stubWorker) Run(ctx context.Context) {
 
 func TestNewPeriodicWorker(t *testing.T) {
 	t.Run("интервал_по_умолчанию", func(t *testing.T) {
-		w := NewPeriodicWorker("job", "ошибка job", 0, func(ctx context.Context) error { return nil }, zap.NewNop())
+		w := NewPeriodicWorker("job", "ошибка job", 0, func(_ context.Context) error { return nil }, zap.NewNop())
 		if w.interval != 60*time.Second {
 			t.Fatalf("получили %v, ожидали %v", w.interval, 60*time.Second)
 		}
 	})
 
 	t.Run("заданный_интервал", func(t *testing.T) {
-		w := NewPeriodicWorker("job", "ошибка job", time.Second, func(ctx context.Context) error { return nil }, zap.NewNop())
+		w := NewPeriodicWorker("job", "ошибка job", time.Second, func(_ context.Context) error { return nil }, zap.NewNop())
 		if w.interval != time.Second {
 			t.Fatalf("получили %v, ожидали %v", w.interval, time.Second)
 		}
@@ -41,7 +41,7 @@ func TestNewPeriodicWorker(t *testing.T) {
 
 func TestPeriodicWorker_Name(t *testing.T) {
 	t.Run("возвращает_имя", func(t *testing.T) {
-		w := NewPeriodicWorker("job", "ошибка job", time.Second, func(ctx context.Context) error { return nil }, zap.NewNop())
+		w := NewPeriodicWorker("job", "ошибка job", time.Second, func(_ context.Context) error { return nil }, zap.NewNop())
 		if w.Name() != "job" {
 			t.Fatalf("получили %q, ожидали job", w.Name())
 		}
