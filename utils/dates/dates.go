@@ -3,15 +3,19 @@ package dates
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
 const (
 	ISODateFormat string = "2006-01-02" // ISO 8601 (YYYY-MM-DD)
+	// DatetimeFormat — дата и время «наивные»; в [ParseScheduledAt] разбираются в UTC.
+	DatetimeFormat = "2006-01-02 15:04:05"
 )
 
 var (
-	ErrWrongDateFormat = errors.New("некорректный формат date")
+	ErrWrongDateFormat        = errors.New("некорректный формат date")
+	ErrWrongScheduledAtFormat = errors.New("некорректный формат scheduledAt. Ожидается RFC3339")
 )
 
 // OptionalDatePtr преобразует строку даты в `*time.Time`, если дата передана.
@@ -72,4 +76,46 @@ func TruncateToDateIn(t time.Time, loc *time.Location) time.Time {
 func DateToYYYYMMDD(t time.Time) int64 {
 	y, m, d := t.Date()
 	return int64(y)*10000 + int64(m)*100 + int64(d)
+}
+
+// EarliestDate возвращает указатель на наименьшую (самую раннюю) дату среди dates.
+// Элементы nil пропускаются. Если не передано ни одной ненилевой даты, возвращается nil.
+// Возвращается один из исходных указателей, а не копия [time.Time].
+func EarliestDate(dates ...*time.Time) *time.Time {
+	var result *time.Time
+	for _, d := range dates {
+		if d == nil {
+			continue
+		}
+		if result == nil || d.Before(*result) {
+			result = d
+		}
+	}
+	return result
+}
+
+// ParseScheduledAt разбирает момент времени для планирования (scheduledAt).
+//
+// Строка из одних пробелов и табуляций считается пустой: возвращается time.Now и nil.
+// Иначе по очереди пробуются:
+//   - time.RFC3339Nano;
+//   - time.RFC3339;
+//   - [DatetimeFormat] через time.ParseInLocation(…, time.UTC).
+//
+// Если ни один вариант не подошёл — (time.Time{}, [ErrWrongScheduledAtFormat]).
+func ParseScheduledAt(s string) (time.Time, error) {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return time.Now(), nil
+	}
+	if t, err := time.Parse(time.RFC3339Nano, s); err == nil {
+		return t, nil
+	}
+	if t, err := time.Parse(time.RFC3339, s); err == nil {
+		return t, nil
+	}
+	if t, err := time.ParseInLocation(DatetimeFormat, s, time.UTC); err == nil {
+		return t, nil
+	}
+	return time.Time{}, ErrWrongScheduledAtFormat
 }

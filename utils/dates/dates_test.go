@@ -172,3 +172,88 @@ func TestDateToYYYYMMDD(t *testing.T) {
 		}
 	})
 }
+
+func TestEarliestDate(t *testing.T) {
+	t.Parallel()
+	t.Run("только_nil", func(t *testing.T) {
+		if got := EarliestDate(nil, nil); got != nil {
+			t.Fatalf("EarliestDate: ожидали nil, получили %v", got)
+		}
+		if got := EarliestDate(); got != nil {
+			t.Fatalf("EarliestDate: ожидали nil, получили %v", got)
+		}
+	})
+	t.Run("один_ненилевой", func(t *testing.T) {
+		a := time.Date(2024, 1, 2, 0, 0, 0, 0, time.UTC)
+		pa := &a
+		if got := EarliestDate(nil, pa, nil); got != &a {
+			t.Fatalf("EarliestDate: ожидали тот же указатель, got=%v", got)
+		}
+	})
+	t.Run("раньше_другого", func(t *testing.T) {
+		early := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		late := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+		pe, pl := &early, &late
+		if got := EarliestDate(pl, pe); got != pe {
+			t.Fatalf("EarliestDate: ожидали %v, получили %v", &early, got)
+		}
+		if got := EarliestDate(pe, pl); got != pe {
+			t.Fatalf("EarliestDate: ожидали %v, получили %v", &early, got)
+		}
+	})
+}
+
+func TestParseScheduledAt(t *testing.T) {
+	t.Parallel()
+	t.Run("пустая_строка_и_пробелы_как_сейчас", func(t *testing.T) {
+		for _, in := range []string{"", "   ", "\t"} {
+			got, err := ParseScheduledAt(in)
+			if err != nil {
+				t.Fatalf("ParseScheduledAt: %q: %v", in, err)
+			}
+			if d := time.Since(got); d < 0 || d > 2*time.Second {
+				t.Fatalf("ParseScheduledAt: %q=%v, ожидали около now", in, got)
+			}
+		}
+	})
+	t.Run("RFC3339", func(t *testing.T) {
+		want := time.Date(2024, 3, 15, 14, 30, 0, 0, time.FixedZone("", 3*3600))
+		got, err := ParseScheduledAt("2024-03-15T14:30:00+03:00")
+		if err != nil {
+			t.Fatalf("ParseScheduledAt: %v", err)
+		}
+		if !got.Equal(want) {
+			t.Fatalf("ParseScheduledAt: ожидали %v, получили %v", want, got)
+		}
+	})
+	t.Run("RFC3339Nano_с_долей_секунды", func(t *testing.T) {
+		const s = "2024-03-15T14:30:00.5+03:00"
+		want, werr := time.Parse(time.RFC3339Nano, s)
+		if werr != nil {
+			t.Fatal(werr)
+		}
+		got, err := ParseScheduledAt(s)
+		if err != nil {
+			t.Fatalf("ParseScheduledAt: %v", err)
+		}
+		if !got.Equal(want) {
+			t.Fatalf("ParseScheduledAt: ожидали %v, получили %v", want, got)
+		}
+	})
+	t.Run("legacy_дата_время_в_UTC", func(t *testing.T) {
+		want := time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC)
+		got, err := ParseScheduledAt("2020-01-02 12:00:00")
+		if err != nil {
+			t.Fatalf("ParseScheduledAt: %v", err)
+		}
+		if !got.Equal(want) {
+			t.Fatalf("ParseScheduledAt: ожидали %v, получили %v", want, got)
+		}
+	})
+	t.Run("некорректная_строка", func(t *testing.T) {
+		_, err := ParseScheduledAt("не-дата")
+		if !errors.Is(err, ErrWrongScheduledAtFormat) {
+			t.Fatalf("ParseScheduledAt: ожидали ErrWrongScheduledAtFormat, получили %v", err)
+		}
+	})
+}
