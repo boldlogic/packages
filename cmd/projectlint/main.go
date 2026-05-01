@@ -27,11 +27,16 @@ type finding struct {
 }
 
 func main() {
-	findings, err := run(".")
+	root := "."
+	findings, err := run(root)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ошибка projectlint: %v\n", err)
 		os.Exit(1)
 	}
+
+	readmeFindings := lintReadmeReleaseVersusGit(root)
+	findings = append(findings, readmeFindings...)
+
 	if len(findings) == 0 {
 		return
 	}
