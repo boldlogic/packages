@@ -24,10 +24,10 @@ func DecodeJSON[T any](filebody []byte) (T, error) {
 }
 
 // DecodeJSONStrict декодирует JSON и запрещает неизвестные поля.
-func DecodeJSONStrict[T any](filebody []byte) (T, error) {
+func DecodeJSONStrict[T any](body []byte) (T, error) {
 	var v T
 
-	decoder := json.NewDecoder(bytes.NewReader(filebody))
+	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&v); err != nil {

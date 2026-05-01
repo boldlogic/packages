@@ -15,7 +15,9 @@ import (
 	"unicode"
 )
 
-var tRunNamePattern = regexp.MustCompile(`^[\p{Cyrillic}A-Za-z0-9]+(?:_[\p{Cyrillic}A-Za-z0-9]+)*$`)
+// Имя t.Run: сегменты через «_»; внутри сегмента — кириллица/latin/цифры и - : / ; =
+// (тире, двоеточие, слэш — для MIME, путей и похожих подписей сценариев).
+var tRunNamePattern = regexp.MustCompile(`^(?:[\p{Cyrillic}A-Za-z0-9\-:/;=]+)(?:_[\p{Cyrillic}A-Za-z0-9\-:/;=]+)*$`)
 var formatVerbPattern = regexp.MustCompile(`%[-+#0-9.*\[\]]*[a-zA-Z]`)
 
 type finding struct {
@@ -200,7 +202,7 @@ func lintTestFile(path string) ([]finding, error) {
 		}
 
 		if !tRunNamePattern.MatchString(name) || strings.Contains(name, ".") || strings.Contains(name, " ") {
-			findings = append(findings, newFinding(fset, path, call.Pos(), "имя под-теста t.Run должно быть на русском или с допустимыми идентификаторами, слова разделяются символом '_' без пробелов и точек"))
+			findings = append(findings, newFinding(fset, path, call.Pos(), "имя под-теста t.Run: сегменты через '_', допустимы кириллица/latin/цифры и символы - : / ; =, без пробелов и точек"))
 		}
 		return true
 	})
