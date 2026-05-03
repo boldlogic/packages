@@ -8,11 +8,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+// HTTPMetrics держит Prometheus-счётчики и гистограммы для HTTP-запросов.
 type HTTPMetrics struct {
 	httpRequestsTotal   *prometheus.CounterVec
 	httpRequestDuration *prometheus.HistogramVec
 }
 
+// NewMetrics регистрирует (или переиспользует) коллекторы HTTP-метрик в переданном registry.
 func NewMetrics(reg metrics.Registry) *HTTPMetrics {
 	return &HTTPMetrics{
 		httpRequestsTotal:   registerOrGetCounterVec(reg, newRequestsCounter()),
@@ -63,6 +65,7 @@ func registerOrGetHistogramVec(reg prometheus.Registerer, h *prometheus.Histogra
 	return h
 }
 
+// RecordRequest увеличивает счётчик запросов и записывает длительность по method, route и status.
 func (m *HTTPMetrics) RecordRequest(method, route, status string, duration time.Duration) {
 	m.httpRequestsTotal.WithLabelValues(method, route, status).Inc()
 	m.httpRequestDuration.WithLabelValues(method, route).Observe(duration.Seconds())

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// Строка в корневом README: Текущий релиз: `v0.1.11` (пример формата).
+// Строка в корневом README: Текущий релиз: `v0.1.12` (пример формата).
 var readmeReleaseRE = regexp.MustCompile("Текущий релиз:\\s*`(v[0-9]+\\.[0-9]+\\.[0-9]+)`")
 
 // lintReadmeReleaseVersusGit сравнивает semver из README с максимальным локальным тегом v*.*.*.

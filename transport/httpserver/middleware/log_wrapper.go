@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Wrap оборачивает handler: пишет debug-лог по завершении запроса (метод, путь, статус, длительность).
 func (m Middleware) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
