@@ -12,19 +12,19 @@ type sampleJSON struct {
 	Name string `json:"name,omitempty"`
 }
 
-func postHandler(w http.ResponseWriter, r *http.Request) {
-	var sample sampleJSON
-	var err error
-	sample, err = DecodeRequest[sampleJSON](r)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(sample.Name))
+// func postHandler(w http.ResponseWriter, r *http.Request) {
+// 	var sample sampleJSON
+// 	var err error
+// 	sample, err = DecodeRequest[sampleJSON](r)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		w.Write([]byte(err.Error()))
+// 		return
+// 	}
+// 	w.WriteHeader(http.StatusOK)
+// 	w.Write([]byte(sample.Name))
 
-}
+// }
 
 func Test_checkContentType(t *testing.T) {
 	p, _ := json.Marshal(sampleJSON{
