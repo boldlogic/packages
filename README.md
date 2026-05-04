@@ -3,9 +3,9 @@
 [![CI](https://github.com/boldlogic/packages/actions/workflows/go.yml/badge.svg)](https://github.com/boldlogic/packages/actions/workflows/go.yml)
 [![Go Version](https://img.shields.io/badge/go-1.25.9-blue.svg)](https://golang.org)
 
-Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, in-memory cache, базовый Prometheus registry, периодические фоновые задачи, инициализация логгера на базе `zap`, подключение к Microsoft SQL Server и обработка ошибок graceful shutdown.
+Набор небольших Go-пакетов для типовых задач в сервисах и CLI-приложениях: загрузка конфигурации, декодирование JSON/YAML, in-memory cache, базовый Prometheus registry, HTTP-метрики и middleware, разбор HTTP-запросов, работа с датами, периодические фоновые задачи, инициализация логгера на базе `zap`, подключение к Microsoft SQL Server и обработка ошибок graceful shutdown.
 
-Текущий релиз: `v0.1.12`
+Текущий релиз: `v0.1.13`
 
 ## Что есть в репозитории
 
@@ -18,7 +18,11 @@
 | [metrics](./metrics) | Базовый Prometheus registry со стандартными коллекторами |
 | [periodic](./periodic) | Запуск периодических worker и координация фоновых задач |
 | [shutdown](./shutdown) | Распознавание ошибок отмены контекста и превышения дедлайна |
+| [transport/httpserver/httpmetrics](./transport/httpserver/httpmetrics) | Prometheus-метрики для HTTP-запросов |
+| [transport/httpserver/middleware](./transport/httpserver/middleware) | Middleware для логирования HTTP-запросов и записи метрик |
+| [transport/httputils](./transport/httputils) | Разбор JSON-запросов, валидация структур и пагинация из query-параметров |
 | [utils/converters](./utils/converters) | Дженерик-декодеры JSON и YAML из `[]byte` |
+| [utils/dates](./utils/dates) | Утилиты для разбора, нормализации и сравнения дат |
 | [utils/xmlconv](./utils/xmlconv) | Утилиты для декодирования XML, включая числа с десятичной запятой |
 
 ## Когда это полезно
@@ -26,10 +30,13 @@
 - Нужен единый способ читать конфигурацию из `.yaml`, `.yml` или `.json`.
 - Нужен небольшой локальный cache в памяти с TTL.
 - Нужен готовый Prometheus registry без дублирования инициализации стандартных коллекторов.
+- Нужны HTTP-метрики и middleware для записи метода, маршрута, статуса и длительности запроса.
+- Нужно декодировать JSON-тело HTTP-запроса с ограничением размера и валидацией структуры.
 - Нужно запускать фоновые задачи по интервалу и останавливать их по контексту.
 - Хочется быстро поднять структурированный логгер без отдельного слоя инициализации.
 - Нужно стандартно описывать подключение к SQL Server и открывать его с `PingContext`.
 - Нужно отличать ожидаемую отмену по контексту от настоящих ошибок приложения.
+- Нужно разобрать дату, получить начало текущего дня или выбрать самую раннюю дату.
 - Нужно разбирать XML с числами в формате `12,34`.
 - Нужны компактные переиспользуемые пакеты без тяжёлой инфраструктуры.
 
@@ -53,7 +60,11 @@ go get github.com/boldlogic/packages/logger/zaplog
 go get github.com/boldlogic/packages/metrics
 go get github.com/boldlogic/packages/periodic
 go get github.com/boldlogic/packages/shutdown
+go get github.com/boldlogic/packages/transport/httpserver/httpmetrics
+go get github.com/boldlogic/packages/transport/httpserver/middleware
+go get github.com/boldlogic/packages/transport/httputils
 go get github.com/boldlogic/packages/utils/converters
+go get github.com/boldlogic/packages/utils/dates
 go get github.com/boldlogic/packages/utils/xmlconv
 ```
 
@@ -92,12 +103,6 @@ func main() {
 }
 ```
 
-Запуск с кастомным конфигом:
-
-```bash
-go run ./cmd/app -config ./configs/dev.yaml
-```
-
 ## Что важно знать
 
 - `commonconfig.DecodeConfig` сохраняет текущее мягкое поведение и игнорирует неизвестные поля.
@@ -107,14 +112,22 @@ go run ./cmd/app -config ./configs/dev.yaml
 - `metrics.New` сразу регистрирует стандартные Go- и process-метрики Prometheus.
 - `periodic` запускает worker до отмены контекста и подходит для фоновых сервисных задач.
 - `shutdown.IsExceeded` возвращает `true` для `context.Canceled` и `context.DeadlineExceeded`, включая обёрнутые ошибки.
+- `transport/httputils.DecodeRequest` проверяет `Content-Type`, ограничивает размер тела и запрещает неизвестные JSON-поля.
+- `transport/httputils.ParseListPagination` применяет `DefaultLimit` и ограничивает `limit` значением `MaxLimit`.
+- `transport/httpserver/httpmetrics` регистрирует метрики `http_requests_total` и `http_request_duration_seconds`.
+- `transport/httpserver/middleware` использует шаблон маршрута chi, если он доступен, иначе берёт `URL.Path`.
+- `utils/dates.ParseScheduledAt` разбирает `time.RFC3339Nano`, `time.RFC3339` и формат `2006-01-02 15:04:05`.
 - `zaplog` пишет либо в `stdout`, либо в один файл, указанный в `OutputFile`.
 - Если файл логов открыть не удалось, `zaplog` автоматически переключается на `stdout`.
 - `xmlconv.RuFloat` помогает читать XML-числа с десятичной запятой без ручного пост-обработчика.
 
 ## Зависимости
 
-- `go.uber.org/zap` для логирования
+- `github.com/go-chi/chi/v5` для чтения шаблона HTTP-маршрута
+- `github.com/go-playground/validator/v10` для валидации структур
 - `github.com/microsoft/go-mssqldb` для SQL Server
+- `github.com/prometheus/client_golang` для метрик
+- `go.uber.org/zap` для логирования
 - `gopkg.in/yaml.v3` для YAML
 
 ## Разработка

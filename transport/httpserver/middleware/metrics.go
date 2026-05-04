@@ -8,7 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Metrics оборачивает handler: после ответа записывает метрики по методу, шаблону маршрута (chi) и статусу.
+// Metrics оборачивает handler и после ответа записывает HTTP-метрики.
+//
+// Для label route используется шаблон маршрута из chi, если он доступен,
+// иначе используется путь запроса.
 func (m Middleware) Metrics(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

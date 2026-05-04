@@ -16,6 +16,11 @@ var (
 	ErrInvalidOffset = errors.New("некорректный offset")
 )
 
+// ParseListPagination читает limit и offset из query-параметров HTTP-запроса.
+//
+// Если limit не передан, возвращается [DefaultLimit]. Если limit больше [MaxLimit],
+// возвращается [MaxLimit]. Некорректный limit возвращает [ErrInvalidLimit],
+// некорректный offset возвращает [ErrInvalidOffset].
 func ParseListPagination(r *http.Request) (limit, offset int, err error) {
 	limit = DefaultLimit
 	offset = 0

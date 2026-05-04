@@ -7,6 +7,7 @@
 ```go
 func GetConfigPath(defaultConfigPath string) string
 func DecodeConfig[T any](path string) (T, error)
+func DecodeConfigStrict[T any](path string) (T, error)
 ```
 
 ## Функции
@@ -19,11 +20,7 @@ func DecodeConfig[T any](path string) (T, error)
 path := GetConfigPath("config/default.yaml")
 ```
 
-Запуск с кастомным путём:
-
-```bash
-go run main.go -config custom.yaml
-```
+Если в аргументах текущего процесса передан флаг `-config`, функция вернёт его значение.
 
 ### `DecodeConfig`
 
@@ -36,6 +33,14 @@ type Config struct {
 }
 
 cfg, err := DecodeConfig[Config]("config.yaml")
+```
+
+### `DecodeConfigStrict`
+
+Декодирует файл конфигурации как `DecodeConfig`, но запрещает неизвестные поля в YAML и JSON.
+
+```go
+cfg, err := DecodeConfigStrict[Config]("config.yaml")
 ```
 
 ## Ошибки

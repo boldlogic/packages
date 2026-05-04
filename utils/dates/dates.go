@@ -60,19 +60,19 @@ func ParseWithDefaultNow(date string, layout string) (time.Time, error) {
 
 }
 
-// Today Возвращает сегодняшнюю дату (полночь) в локальной временной зоне.
+// Today возвращает сегодняшнюю дату с временем 00:00:00 в локальной временной зоне.
 func Today() time.Time {
 	now := time.Now()
 	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 }
 
-// TruncateToDateIn Обрезает t до даты (полночь) в указанной локали.
+// TruncateToDateIn обрезает t до даты с временем 00:00:00 в указанной локации.
 func TruncateToDateIn(t time.Time, loc *time.Location) time.Time {
 	tIn := t.In(loc)
 	return time.Date(tIn.Year(), tIn.Month(), tIn.Day(), 0, 0, 0, 0, loc)
 }
 
-// DateToYYYYMMDD Возвращает дату как int64 YYYYMMDD
+// DateToYYYYMMDD возвращает дату как число в формате YYYYMMDD.
 func DateToYYYYMMDD(t time.Time) int64 {
 	y, m, d := t.Date()
 	return int64(y)*10000 + int64(m)*100 + int64(d)
