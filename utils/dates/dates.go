@@ -48,7 +48,7 @@ func OptionalDatePtr(date string, layout string) (*time.Time, error) {
 // сообщение от time.Parse для отладки.
 func ParseWithDefaultNow(date string, layout string) (time.Time, error) {
 	if date == "" {
-		return time.Now(), nil
+		return time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Local), nil
 	}
 
 	parsed, err := time.Parse(layout, date)
@@ -56,7 +56,7 @@ func ParseWithDefaultNow(date string, layout string) (time.Time, error) {
 		return time.Time{}, fmt.Errorf("%w: %v", ErrWrongDateFormat, err)
 	}
 
-	return parsed, nil
+	return time.Date(parsed.Year(), parsed.Month(), parsed.Day(), 0, 0, 0, 0, time.Local), nil
 
 }
 
