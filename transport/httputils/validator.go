@@ -13,6 +13,9 @@ var defaultValidator *validator.Validate
 
 func init() {
 	defaultValidator = validator.New()
+	if err := defaultValidator.RegisterValidation("decimal", isDecimal); err != nil {
+		panic(err)
+	}
 
 	defaultValidator.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
