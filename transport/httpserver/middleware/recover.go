@@ -17,7 +17,8 @@ func (m Middleware) Recover(next http.Handler) http.Handler {
 				m.logger.Error("возникла паника",
 					zap.Any("rec", rec),
 					zap.ByteString("stack", debug.Stack()))
-				rw.status = http.StatusInternalServerError
+				//rw.status = http.StatusInternalServerError
+				rw.WriteHeader(http.StatusInternalServerError)
 			}
 		}()
 
