@@ -58,7 +58,7 @@ func New(cfg Config) *zap.Logger
 ## Установка
 
 ```bash
-go get github.com/boldlogic/packages/logger/zaplog@v0.1.14
+go get github.com/boldlogic/packages/logger/zaplog@v0.1.17
 ```
 
 ## Пример конфигурации
@@ -115,4 +115,3 @@ func main() {
 - не открывает расширенный набор настроек `zap` через собственный оборачивающий API
 
 Такой подход помогает держать контракт компактным и предсказуемым там, где важнее устойчивый базовый логгер, чем большой набор режимов и опций.
-
