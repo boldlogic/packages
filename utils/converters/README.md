@@ -2,55 +2,12 @@
 
 Пакет `converters` предоставляет универсальные функции для декодирования данных в форматах JSON и YAML в типизированные структуры Go.
 
-## Публичный API
+## Что делает пакет
 
-```go
-func DecodeJSON[T any](filebody []byte) (T, error)
-func DecodeJSONStrict[T any](body []byte) (T, error)
-func DecodeYAML[T any](filebody []byte) (T, error)
-func DecodeYAMLStrict[T any](filebody []byte) (T, error)
-```
-
-## Функции
-
-### `DecodeJSON`
-
-Декодирует JSON-данные в структуру типа `T`.
-
-```go
-type Config struct {
-    Name string `json:"name"`
-    Port int    `json:"port"`
-}
-
-data := []byte(`{"name": "app", "port": 8080}`)
-cfg, err := DecodeJSON[Config](data)
-```
-
-### `DecodeJSONStrict`
-
-Декодирует JSON-данные в структуру типа `T`, запрещает неизвестные поля и возвращает ошибку при нескольких JSON-значениях в одном `[]byte`.
-
-### `DecodeYAML`
-
-Декодирует YAML-данные в структуру типа `T`.
-
-```go
-type Config struct {
-    Name string `yaml:"name"`
-    Port int    `yaml:"port"`
-}
-
-data := []byte(`
-name: app
-port: 8080
-`)
-cfg, err := DecodeYAML[Config](data)
-```
-
-### `DecodeYAMLStrict`
-
-Декодирует YAML-данные в структуру типа `T`, запрещает неизвестные поля и возвращает ошибку при нескольких YAML-документах.
+- декодирует JSON из `[]byte` в тип `T`
+- декодирует YAML из `[]byte` в тип `T`
+- strict JSON запрещает неизвестные поля и несколько JSON-значений
+- strict YAML запрещает неизвестные поля и несколько YAML-документов
 
 ## Ошибки
 

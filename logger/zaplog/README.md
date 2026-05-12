@@ -1,6 +1,6 @@
 # zaplog
 
-`zaplog` — компактный пакет логирования на базе `go.uber.org/zap`. Он даёт небольшой и явный контракт конфигурации для сервисов, которым нужен структурированный логгер без разрастания собственного слоя инициализации вокруг `zap`.
+`zaplog` — компактный пакет логирования на базе `go.uber.org/zap`.
 
 ## Что делает пакет
 
@@ -10,19 +10,6 @@
 - пишет либо в `stdout`, либо в один целевой файл
 - при невозможности открыть файл автоматически возвращается к `stdout`
 - добавляет информацию о месте вызова в каждый логгер, созданный через `New`
-
-## Публичный API
-
-```go
-type Config struct {
-    Level      string
-    Format     string
-    OutputFile string
-}
-
-func (c Config) Validate() []error
-func New(cfg Config) *zap.Logger
-```
 
 ## Конфигурация
 
@@ -61,57 +48,8 @@ func New(cfg Config) *zap.Logger
 go get github.com/boldlogic/packages/logger/zaplog
 ```
 
-## Пример конфигурации
-
-```json
-{
-  "level": "debug",
-  "format": "json",
-  "output_file": "app.log"
-}
-```
-
-## Пример использования
-
-```go
-package main
-
-import (
-    "log"
-
-    zaplog "github.com/boldlogic/packages/logger/zaplog"
-)
-
-func main() {
-    cfg := zaplog.Config{
-        Level:      "debug",
-        Format:     "json",
-        OutputFile: "app.log",
-    }
-
-    if errs := cfg.Validate(); len(errs) > 0 {
-        log.Fatalf("некорректная конфигурация логгера: %v", errs)
-    }
-
-    l := zaplog.New(cfg)
-    defer l.Sync()
-
-    l.Info("сервис запущен")
-}
-```
-
 ## Характеристики вывода
 
 - логгер использует production encoder config из `zap`
 - время форматируется как `2006-01-02 15:04:05.000`
 - `New` возвращает логгер, созданный с `zap.AddCaller()`
-
-## Особенности дизайна
-
-Пакет намеренно остаётся узким по зоне ответственности:
-
-- не занимается загрузкой конфигурации приложения
-- не пишет одновременно и в файл, и в консоль
-- не открывает расширенный набор настроек `zap` через собственный оборачивающий API
-
-Такой подход помогает держать контракт компактным и предсказуемым там, где важнее устойчивый базовый логгер, чем большой набор режимов и опций.

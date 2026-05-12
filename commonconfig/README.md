@@ -2,46 +2,12 @@
 
 Пакет `commonconfig` предоставляет утилиты для работы с конфигурационными файлами: получение пути к файлу и декодирование в типизированные структуры.
 
-## Публичный API
+## Что делает пакет
 
-```go
-func GetConfigPath(defaultConfigPath string) string
-func DecodeConfig[T any](path string) (T, error)
-func DecodeConfigStrict[T any](path string) (T, error)
-```
-
-## Функции
-
-### `GetConfigPath`
-
-Возвращает путь к файлу конфигурации из флага `-config`. Если флаг не передан, возвращает `defaultConfigPath`.
-
-```go
-path := GetConfigPath("config/default.yaml")
-```
-
-Если в аргументах текущего процесса передан флаг `-config`, функция вернёт его значение.
-
-### `DecodeConfig`
-
-Декодирует файл конфигурации в структуру типа `T`. Поддерживает форматы: `.yaml`, `.yml`, `.json`. Выбор формата определяется по расширению файла.
-
-```go
-type Config struct {
-    Name string `json:"name" yaml:"name"`
-    Port int    `json:"port" yaml:"port"`
-}
-
-cfg, err := DecodeConfig[Config]("config.yaml")
-```
-
-### `DecodeConfigStrict`
-
-Декодирует файл конфигурации как `DecodeConfig`, но запрещает неизвестные поля в YAML и JSON.
-
-```go
-cfg, err := DecodeConfigStrict[Config]("config.yaml")
-```
+- читает путь к конфигу из флага `-config`
+- возвращает `defaultConfigPath`, если флаг не задан или пустой
+- декодирует `.yaml`, `.yml` и `.json`
+- в strict-режиме запрещает неизвестные поля
 
 ## Ошибки
 

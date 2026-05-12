@@ -41,8 +41,7 @@ func OptionalDatePtr(date string, layout string) (*time.Time, error) {
 
 // ParseWithDefaultNow парсит строку date с помощью time.Parse и переданного layout.
 //
-// Если date пустая, возвращается time.Now и nil — удобно для значений по умолчанию
-// из query-параметров или форм.
+// Если date пустая, возвращается текущая дата с временем 00:00:00 и nil.
 // Если строка не соответствует формату, ошибка обёртывает ErrWrongDateFormat
 // (errors.Is(err, ErrWrongDateFormat) остаётся истинным); в цепочке сохраняется
 // сообщение от time.Parse для отладки.

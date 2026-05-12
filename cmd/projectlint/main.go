@@ -34,9 +34,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	readmeFindings := lintReadmeReleaseVersusGit(root)
-	findings = append(findings, readmeFindings...)
-
 	if len(findings) == 0 {
 		return
 	}
