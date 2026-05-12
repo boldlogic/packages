@@ -16,8 +16,11 @@ func (m Middleware) Recover(next http.Handler) http.Handler {
 			if rec := recover(); rec != nil {
 				m.logger.Error("возникла паника",
 					zap.Any("rec", rec),
-					zap.ByteString("stack", debug.Stack()))
-				//rw.status = http.StatusInternalServerError
+					zap.ByteString("stack", debug.Stack()),
+					zap.String("method", r.Method),
+					zap.String("url", r.URL.Path),
+				)
+
 				rw.WriteHeader(http.StatusInternalServerError)
 			}
 		}()

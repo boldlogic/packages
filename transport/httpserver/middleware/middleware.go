@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"log"
+
 	"github.com/boldlogic/packages/transport/httpserver/httpmetrics"
 	"go.uber.org/zap"
 )
@@ -13,8 +15,11 @@ type Middleware struct {
 
 // NewMiddleware создаёт цепочку middleware с заданными метриками и логгером.
 func NewMiddleware(metrics *httpmetrics.HTTPMetrics, logger *zap.Logger) *Middleware {
-	return &Middleware{
-		logger:  logger,
-		metrics: metrics,
+	var m = Middleware{}
+	if logger == nil {
+		log.Println("логгер не передан")
+		m.logger = zap.NewNop()
 	}
+	m.metrics = metrics
+	return &m
 }
