@@ -18,14 +18,14 @@ func TestRecover(t *testing.T) {
 	}{
 		{
 			name: "паника_до_записи_ответа_возвращает_500",
-			handler: func(w http.ResponseWriter, r *http.Request) {
+			handler: func(_ http.ResponseWriter, _ *http.Request) {
 				panic("причина")
 			},
 			wantStatus: http.StatusInternalServerError,
 		},
 		{
 			name: "обычный_ответ_проходит_без_изменений",
-			handler: func(w http.ResponseWriter, r *http.Request) {
+			handler: func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusCreated)
 				_, _ = w.Write([]byte("ok"))
 			},
@@ -34,7 +34,7 @@ func TestRecover(t *testing.T) {
 		},
 		{
 			name: "паника_после_записи_заголовка_оставляет_исходный_статус",
-			handler: func(w http.ResponseWriter, r *http.Request) {
+			handler: func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusCreated)
 				panic("причина")
 			},

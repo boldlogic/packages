@@ -15,11 +15,12 @@ type Middleware struct {
 
 // NewMiddleware создаёт цепочку middleware с заданными метриками и логгером.
 func NewMiddleware(metrics *httpmetrics.HTTPMetrics, logger *zap.Logger) *Middleware {
-	var m = Middleware{}
 	if logger == nil {
 		log.Println("логгер не передан")
-		m.logger = zap.NewNop()
+		logger = zap.NewNop()
 	}
-	m.metrics = metrics
-	return &m
+	return &Middleware{
+		logger:  logger,
+		metrics: metrics,
+	}
 }
