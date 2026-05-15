@@ -16,6 +16,7 @@
 | [metrics](./metrics)                                                   | Базовый Prometheus registry со стандартными коллекторами                   |
 | [periodic](./periodic)                                                 | Запуск периодических worker и координация фоновых задач                    |
 | [shutdown](./shutdown)                                                 | Распознавание ошибок отмены контекста и превышения дедлайна                |
+| [transport/httpserver](./transport/httpserver)                         | Обёртка над `net/http.Server` с типизированной конфигурацией и дефолтами    |
 | [transport/httpserver/httpmetrics](./transport/httpserver/httpmetrics) | Prometheus-метрики для HTTP-запросов                                       |
 | [transport/httpserver/middleware](./transport/httpserver/middleware)   | Middleware для логирования HTTP-запросов и записи метрик                   |
 | [transport/httpserver/response](./transport/httpserver/response)       | Запись JSON-ответов HTTP и описание ошибок в формате, близком к RFC 7807   |
